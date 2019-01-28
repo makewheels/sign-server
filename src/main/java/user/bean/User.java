@@ -1,10 +1,9 @@
-package user;
+package user.bean;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
 
 /**
  * 用户
@@ -18,8 +17,8 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private String nickname;
-	@OneToOne
-	private UserDetail userDetail;
+	private String loginToken;
+	private String qqOpenid;
 
 	public Integer getId() {
 		return id;
@@ -37,12 +36,20 @@ public class User {
 		this.nickname = nickname;
 	}
 
-	public UserDetail getUserDetail() {
-		return userDetail;
+	public String getLoginToken() {
+		return loginToken;
 	}
 
-	public void setUserDetail(UserDetail userDetail) {
-		this.userDetail = userDetail;
+	public void setLoginToken(String loginToken) {
+		this.loginToken = loginToken;
+	}
+
+	public String getQqOpenid() {
+		return qqOpenid;
+	}
+
+	public void setQqOpenid(String qqOpenid) {
+		this.qqOpenid = qqOpenid;
 	}
 
 }
