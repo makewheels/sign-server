@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * 登录日志
@@ -16,6 +17,7 @@ import javax.persistence.Id;
  */
 
 @Entity
+@Table(name = "login_log")
 public class LoginLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

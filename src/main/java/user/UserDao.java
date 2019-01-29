@@ -34,4 +34,11 @@ public class UserDao {
 		return query.uniqueResult();
 	}
 
+	/**
+	 * 根据id主键查用户
+	 */
+	public User findUserById(Integer id) {
+		return session.find(User.class, id);
+	}
+
 }

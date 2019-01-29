@@ -1,9 +1,15 @@
 package user.bean;
 
+import java.util.Set;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import mission.bean.Mission;
 
 /**
  * 用户
@@ -12,13 +18,18 @@ import javax.persistence.Id;
  *
  */
 @Entity
+@Table(name = "user")
 public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	private String uuid;
 	private String nickname;
 	private String loginToken;
 	private String qqOpenid;
+	private Integer currentMissionId;
+	@ManyToMany
+	private Set<Mission> missionSet;
 
 	public Integer getId() {
 		return id;
@@ -26,6 +37,14 @@ public class User {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public String getNickname() {
@@ -50,6 +69,22 @@ public class User {
 
 	public void setQqOpenid(String qqOpenid) {
 		this.qqOpenid = qqOpenid;
+	}
+
+	public Integer getCurrentMissionId() {
+		return currentMissionId;
+	}
+
+	public void setCurrentMissionId(Integer currentMissionId) {
+		this.currentMissionId = currentMissionId;
+	}
+
+	public Set<Mission> getMissionSet() {
+		return missionSet;
+	}
+
+	public void setMissionSet(Set<Mission> missionSet) {
+		this.missionSet = missionSet;
 	}
 
 }

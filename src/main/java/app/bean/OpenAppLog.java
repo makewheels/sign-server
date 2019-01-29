@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * 打开应用日志
@@ -15,6 +16,7 @@ import javax.persistence.Id;
  *
  */
 @Entity
+@Table(name = "open_app_log")
 public class OpenAppLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
