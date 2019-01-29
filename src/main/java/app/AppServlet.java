@@ -43,7 +43,7 @@ public class AppServlet extends HttpServlet {
 					openAppLog.setUserAgent(request.getHeader("User-Agent"));
 					String loginToken = request.getParameter("loginToken");
 					// 如果没有loginToken
-					if (loginToken == null) {
+					if (loginToken == null || loginToken.equals("null")) {
 						openAppLog.setUserId(null);
 						// 如果有loginToken
 					} else {

@@ -148,7 +148,7 @@ public class UserServlet extends HttpServlet {
 		request.getSession().setAttribute("user", user);
 		// 回写
 		Map<String, String> map = new HashMap<>();
-		map.put("loginToken", loginToken);
+		map.put("loginToken", refreshLoginToken);
 		ResponseUtil.writeJson(response, map);
 	}
 }
