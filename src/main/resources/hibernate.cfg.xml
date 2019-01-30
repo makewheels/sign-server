@@ -20,5 +20,6 @@
 		<mapping class="user.bean.login.LoginLog" />
 		<mapping class="app.bean.OpenAppLog" />
 		<mapping class="mission.bean.Mission" />
+		<mapping class="sign.bean.Image" />
 	</session-factory>
 </hibernate-configuration>

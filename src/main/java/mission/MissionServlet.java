@@ -94,7 +94,7 @@ public class MissionServlet extends HttpServlet {
 		mission.setStartHour(startHour);
 		mission.setStartMinute(startMinute);
 		mission.setEndHour(endHour);
-		mission.setEndMInute(endMinute);
+		mission.setEndMinute(endMinute);
 		Set<User> userSet = mission.getUserSet();
 		if (userSet == null) {
 			userSet = new HashSet<>();
@@ -111,7 +111,7 @@ public class MissionServlet extends HttpServlet {
 		user.setMissionSet(missionSet);
 		HibernateUtil.update(user);
 		Map<String, String> map = new HashMap<>();
-		map.put("state", "ok");
+		map.put("status", "ok");
 		ResponseUtil.writeJson(response, map);
 	}
 
@@ -136,10 +136,10 @@ public class MissionServlet extends HttpServlet {
 		mission.setStartHour(startHour);
 		mission.setStartMinute(startMinute);
 		mission.setEndHour(endHour);
-		mission.setEndMInute(endMinute);
+		mission.setEndMinute(endMinute);
 		HibernateUtil.save(mission);
 		Map<String, String> map = new HashMap<>();
-		map.put("state", "ok");
+		map.put("status", "ok");
 		map.put("uuid", mission.getUuid());
 		ResponseUtil.writeJson(response, map);
 	}
@@ -157,7 +157,7 @@ public class MissionServlet extends HttpServlet {
 		// 查无此任务
 		if (mission == null) {
 			// 回写错误
-			map.put("state", "error");
+			map.put("status", "error");
 			ResponseUtil.writeJson(response, map);
 			return;
 		} else {
@@ -182,7 +182,7 @@ public class MissionServlet extends HttpServlet {
 			mission.setUserSet(userSet);
 			HibernateUtil.update(mission);
 			// 回写
-			map.put("state", "ok");
+			map.put("status", "ok");
 			map.put("missionName", mission.getName());
 			ResponseUtil.writeJson(response, map);
 		}

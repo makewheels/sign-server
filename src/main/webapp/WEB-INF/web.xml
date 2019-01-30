@@ -57,4 +57,24 @@
 		<servlet-name>MissionServlet</servlet-name>
 		<url-pattern>/mission</url-pattern>
 	</servlet-mapping>
+	<servlet>
+		<description></description>
+		<display-name>SignServlet</display-name>
+		<servlet-name>SignServlet</servlet-name>
+		<servlet-class>sign.SignServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SignServlet</servlet-name>
+		<url-pattern>/sign</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<description></description>
+		<display-name>FileUploadServlet</display-name>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<servlet-class>servlet.FileUploadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>FileUploadServlet</servlet-name>
+		<url-pattern>/upload</url-pattern>
+	</servlet-mapping>
 </web-app>

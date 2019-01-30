@@ -19,6 +19,17 @@ public class HibernateUtil {
 	}
 
 	/**
+	 * 根据逐渐查对象
+	 * 
+	 * @param clazz
+	 * @param primaryKey
+	 * @return
+	 */
+	public static <T> T getObjectById(Class<T> clazz, Object primaryKey) {
+		return session.find(clazz, primaryKey);
+	}
+
+	/**
 	 * 保存对象
 	 * 
 	 * @param object

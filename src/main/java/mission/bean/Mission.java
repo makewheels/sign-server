@@ -30,7 +30,7 @@ public class Mission {
 	private Integer startHour;// 开始小时
 	private Integer startMinute;// 开始分钟
 	private Integer endHour;// 结束小时
-	private Integer endMInute;// 结束分钟
+	private Integer endMinute;// 结束分钟
 	private Date createTime;// 创建时间
 	@ManyToMany
 	private Set<User> userSet;
@@ -91,12 +91,12 @@ public class Mission {
 		this.endHour = endHour;
 	}
 
-	public Integer getEndMInute() {
-		return endMInute;
+	public Integer getEndMinute() {
+		return endMinute;
 	}
 
-	public void setEndMInute(Integer endMInute) {
-		this.endMInute = endMInute;
+	public void setEndMinute(Integer endMinute) {
+		this.endMinute = endMinute;
 	}
 
 	public Date getCreateTime() {
