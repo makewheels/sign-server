@@ -9,14 +9,14 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 /**
- * 图片文件
+ * 录音文件
  * 
  * @author Administrator
  *
  */
 @Entity
-@Table(name = "image")
-public class Image {
+@Table(name = "record")
+public class Record {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -28,8 +28,6 @@ public class Image {
 	private String filename;
 	private String extension;
 	private String contentType;
-	private Integer width;
-	private Integer height;
 	private Long size;
 	private String relativePath;
 	private String absolutePath;
@@ -108,22 +106,6 @@ public class Image {
 
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
-	}
-
-	public Integer getWidth() {
-		return width;
-	}
-
-	public void setWidth(Integer width) {
-		this.width = width;
-	}
-
-	public Integer getHeight() {
-		return height;
-	}
-
-	public void setHeight(Integer height) {
-		this.height = height;
 	}
 
 	public Long getSize() {

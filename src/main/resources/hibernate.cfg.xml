@@ -12,14 +12,18 @@
 		<property name="hibernate.connection.autocommit">true</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
 		<property name="hibernate.show_sql">true</property>
-		<property name="hibernate.hbm2ddl.auto">create</property>
-		<!-- <property name="hibernate.hbm2ddl.auto">update</property> -->
+		<!-- 
+		<property name="hibernate.hbm2ddl.auto">create</property> 
+		-->
 
 		<mapping class="user.bean.User" />
 		<mapping class="user.bean.UserDetail" />
 		<mapping class="user.bean.login.LoginLog" />
 		<mapping class="app.bean.OpenAppLog" />
 		<mapping class="mission.bean.Mission" />
+		<mapping class="sign.bean.SignLog" />
 		<mapping class="sign.bean.Image" />
+		<mapping class="sign.bean.Record" />
+
 	</session-factory>
 </hibernate-configuration>

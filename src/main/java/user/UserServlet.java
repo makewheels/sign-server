@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -76,6 +77,7 @@ public class UserServlet extends HttpServlet {
 			user.setNickname(qqAuthRoot.getUserInfo().getNickname());
 			user.setLoginToken(loginToken);
 			user.setQqOpenid(qqOpenid);
+			user.setUuid(UUID.randomUUID().toString());
 			HibernateUtil.save(user);
 			UserDetail userDetail = new UserDetail();
 			userDetail.setUserId(user.getId());
@@ -132,6 +134,7 @@ public class UserServlet extends HttpServlet {
 		// 刷新loginToken
 		String refreshLoginToken = RandomStringUtils.randomAlphanumeric(50);
 		user.setLoginToken(refreshLoginToken);
+		System.out.println(user);
 		HibernateUtil.update(user);
 		// 登录日志
 		LoginLog loginLog = new LoginLog();

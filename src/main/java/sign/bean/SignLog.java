@@ -8,6 +8,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * 签到记录
+ * 
+ * @author Administrator
+ *
+ */
 @Entity
 @Table(name = "sign_log")
 public class SignLog {
@@ -16,10 +22,15 @@ public class SignLog {
 	private Integer id;
 	private Integer userId;
 	private Integer missionId;
+	private Integer startHour;
+	private Integer startMinute;
+	private Integer endHour;
+	private Integer endMinute;
+	private Boolean inTimeRange;// 是否在时间范围内
 	private String ip;
 	private Date time;
-	private String imageId;// 图片文件id
-	private String recordId;// 录音文件id
+	private Integer imageId;// 图片文件id
+	private Integer recordId;// 录音文件id
 
 	public Integer getId() {
 		return id;
@@ -45,6 +56,46 @@ public class SignLog {
 		this.missionId = missionId;
 	}
 
+	public Integer getStartHour() {
+		return startHour;
+	}
+
+	public void setStartHour(Integer startHour) {
+		this.startHour = startHour;
+	}
+
+	public Integer getStartMinute() {
+		return startMinute;
+	}
+
+	public void setStartMinute(Integer startMinute) {
+		this.startMinute = startMinute;
+	}
+
+	public Integer getEndHour() {
+		return endHour;
+	}
+
+	public void setEndHour(Integer endHour) {
+		this.endHour = endHour;
+	}
+
+	public Integer getEndMinute() {
+		return endMinute;
+	}
+
+	public void setEndMinute(Integer endMinute) {
+		this.endMinute = endMinute;
+	}
+
+	public Boolean getInTimeRange() {
+		return inTimeRange;
+	}
+
+	public void setInTimeRange(Boolean inTimeRange) {
+		this.inTimeRange = inTimeRange;
+	}
+
 	public String getIp() {
 		return ip;
 	}
@@ -61,19 +112,19 @@ public class SignLog {
 		this.time = time;
 	}
 
-	public String getImageId() {
+	public Integer getImageId() {
 		return imageId;
 	}
 
-	public void setImageId(String imageId) {
+	public void setImageId(Integer imageId) {
 		this.imageId = imageId;
 	}
 
-	public String getRecordId() {
+	public Integer getRecordId() {
 		return recordId;
 	}
 
-	public void setRecordId(String recordId) {
+	public void setRecordId(Integer recordId) {
 		this.recordId = recordId;
 	}
 

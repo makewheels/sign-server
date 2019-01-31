@@ -27,7 +27,7 @@ public class LoginLog {
 	private String ip;
 	@Column(length = 2000)
 	private String userAgent;
-	@Column(length = 1000)
+	@Column(length = 2000)
 	private String deviceJson;
 	private String loginToken;// 本次登录使用的loginToken
 	private String refreshLoginToken;// 下次刷新之后要用的loginToken

@@ -87,4 +87,11 @@ public class User {
 		this.missionSet = missionSet;
 	}
 
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", uuid=" + uuid + ", nickname=" + nickname + ", loginToken=" + loginToken
+				+ ", qqOpenid=" + qqOpenid + ", currentMissionId=" + currentMissionId + ", missionSet=" + missionSet
+				+ "]";
+	}
+
 }

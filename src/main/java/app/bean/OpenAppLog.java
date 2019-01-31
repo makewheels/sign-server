@@ -22,7 +22,7 @@ public class OpenAppLog {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private Integer userId;
-	@Column(length = 1000)
+	@Column(length = 2000)
 	private String deviceJson;
 	private String ip;
 	private Date time;
