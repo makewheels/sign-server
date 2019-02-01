@@ -66,6 +66,7 @@ public class AppServlet extends HttpServlet {
 		openAppLog.setIp(request.getRemoteAddr());
 		openAppLog.setTime(new Date());
 		openAppLog.setUserAgent(request.getHeader("User-Agent"));
+		openAppLog.setPosition(request.getParameter("position"));
 		String loginToken = request.getParameter("loginToken");
 		// 如果没有loginToken
 		if (loginToken == null || loginToken.equals("null")) {
@@ -82,6 +83,7 @@ public class AppServlet extends HttpServlet {
 				openAppLog.setUserId(user.getId());
 			}
 		}
+		System.out.println(openAppLog);
 		HibernateUtil.save(openAppLog);
 	}
 

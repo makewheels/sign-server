@@ -3,9 +3,7 @@ package mission;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.servlet.ServletException;
@@ -17,7 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 
 import mission.bean.Mission;
-import user.UserDao;
+import mission.bean.UserMission;
 import user.bean.User;
 import util.HibernateUtil;
 import util.ResponseUtil;
@@ -25,7 +23,6 @@ import util.ResponseUtil;
 public class MissionServlet extends HttpServlet {
 	private static final long serialVersionUID = -1555833866094477766L;
 
-	private UserDao userDao = new UserDao();
 	private MissionDao missionDao = new MissionDao();
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -66,7 +63,7 @@ public class MissionServlet extends HttpServlet {
 	private void getCurrentMission(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		User currentUser = (User) session.getAttribute("user");
-		User findUser = userDao.findUserById(currentUser.getId());
+		User findUser = HibernateUtil.findObjectById(User.class, currentUser.getId());
 		Integer currentMissionId = findUser.getCurrentMissionId();
 		Map<String, Integer> map = new HashMap<>();
 		map.put("currentMissionId", currentMissionId);
@@ -86,8 +83,9 @@ public class MissionServlet extends HttpServlet {
 		int endHour = Integer.parseInt(request.getParameter("endHour"));
 		int endMinute = Integer.parseInt(request.getParameter("endMinute"));
 		User user = (User) request.getSession().getAttribute("user");
+		Integer userId = user.getId();
 		Mission mission = new Mission();
-		mission.setCreateUserId(user.getId());
+		mission.setCreateUserId(userId);
 		mission.setCreateTime(new Date());
 		mission.setUuid(getUuid());
 		mission.setName(missionName);
@@ -95,28 +93,21 @@ public class MissionServlet extends HttpServlet {
 		mission.setStartMinute(startMinute);
 		mission.setEndHour(endHour);
 		mission.setEndMinute(endMinute);
-		Set<User> userSet = mission.getUserSet();
-		if (userSet == null) {
-			userSet = new HashSet<>();
-		}
-		userSet.add(user);
-		mission.setUserSet(userSet);
+		// 保存新任务
 		HibernateUtil.save(mission);
-		user.setCurrentMissionId(mission.getId());
-		Set<Mission> missionSet = user.getMissionSet();
-		if (missionSet == null) {
-			missionSet = new HashSet<>();
-		}
-		missionSet.add(mission);
-		user.setMissionSet(missionSet);
+		Integer missionId = mission.getId();
+		// 更新用户当前任务id
+		user.setCurrentMissionId(missionId);
 		HibernateUtil.update(user);
+		// 在中间表插入数据
+		missionDao.saveUserMission(userId, missionId);
 		Map<String, String> map = new HashMap<>();
 		map.put("status", "ok");
 		ResponseUtil.writeJson(response, map);
 	}
 
 	/**
-	 * 保存一个新任务
+	 * 保存一个任务
 	 * 
 	 * @param request
 	 * @param response
@@ -145,14 +136,14 @@ public class MissionServlet extends HttpServlet {
 	}
 
 	/**
-	 * 加入一个已有的任务
+	 * 加入一个已有任务
 	 * 
 	 * @param request
 	 * @param response
 	 */
 	private void joinMission(HttpServletRequest request, HttpServletResponse response) {
 		String missionUuid = request.getParameter("missionUuid");
-		Mission mission = missionDao.getMissionByUuid(missionUuid);
+		Mission mission = missionDao.findMissionByUuid(missionUuid);
 		Map<String, String> map = new HashMap<>();
 		// 查无此任务
 		if (mission == null) {
@@ -161,26 +152,24 @@ public class MissionServlet extends HttpServlet {
 			ResponseUtil.writeJson(response, map);
 			return;
 		} else {
-			// 更新user
+			Integer missionId = mission.getId();
 			HttpSession session = request.getSession();
 			User user = (User) session.getAttribute("user");
-			user.setCurrentMissionId(mission.getId());
-			session.setAttribute("user", user);
-			Set<Mission> missionSet = user.getMissionSet();
-			if (missionSet == null) {
-				missionSet = new HashSet<>();
-			}
-			missionSet.add(mission);
-			user.setMissionSet(missionSet);
+			// 更新user
+			user.setCurrentMissionId(missionId);
 			HibernateUtil.update(user);
-			// 更新mission
-			Set<User> userSet = mission.getUserSet();
-			if (userSet == null) {
-				userSet = new HashSet<>();
+			// 更新中间表
+			// 如果没有这个记录，保存
+			// 如果已经有这个记录了，什么都不做
+			Integer userId = user.getId();
+			UserMission findUserMission = missionDao.findUserMissionByIds(userId, missionId);
+			if (findUserMission == null) {
+				UserMission userMission = new UserMission();
+				userMission.setUserId(userId);
+				userMission.setMissionId(missionId);
+				userMission.setCreateTime(new Date());
+				HibernateUtil.save(userMission);
 			}
-			userSet.add(user);
-			mission.setUserSet(userSet);
-			HibernateUtil.update(mission);
 			// 回写
 			map.put("status", "ok");
 			map.put("missionName", mission.getName());

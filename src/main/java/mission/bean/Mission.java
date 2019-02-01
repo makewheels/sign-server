@@ -1,16 +1,12 @@
 package mission.bean;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
-import user.bean.User;
 
 /**
  * 任务
@@ -32,8 +28,6 @@ public class Mission {
 	private Integer endHour;// 结束小时
 	private Integer endMinute;// 结束分钟
 	private Date createTime;// 创建时间
-	@ManyToMany
-	private Set<User> userSet;
 
 	public Integer getId() {
 		return id;
@@ -105,14 +99,6 @@ public class Mission {
 
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
-	}
-
-	public Set<User> getUserSet() {
-		return userSet;
-	}
-
-	public void setUserSet(Set<User> userSet) {
-		this.userSet = userSet;
 	}
 
 }

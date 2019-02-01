@@ -76,7 +76,7 @@ public class SignServlet extends HttpServlet {
 	private void getCurrentSignState(HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
-		Mission mission = HibernateUtil.getObjectById(Mission.class, user.getCurrentMissionId());
+		Mission mission = HibernateUtil.findObjectById(Mission.class, user.getCurrentMissionId());
 		Integer missionId = mission.getId();
 		// 当前任务名
 		String currentMissionName = mission.getName();
@@ -144,7 +144,7 @@ public class SignServlet extends HttpServlet {
 		User user = (User) session.getAttribute("user");
 		Integer userId = user.getId();
 		// 找用户的当前任务
-		Mission mission = HibernateUtil.getObjectById(Mission.class, user.getCurrentMissionId());
+		Mission mission = HibernateUtil.findObjectById(Mission.class, user.getCurrentMissionId());
 		// 根据文件uuid找id
 		Image image = imageDao.getImageByUuid(request.getParameter("imageUuid"));
 		Record record = recordDao.getRecordByUuid(request.getParameter("recordUuid"));

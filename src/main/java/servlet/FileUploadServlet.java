@@ -82,7 +82,7 @@ public class FileUploadServlet extends HttpServlet {
 				image.setContentType(fileItem.getContentType());
 				try {
 					InputStream inputStream = fileItem.getInputStream();
-					String relativePath = "/WEB-INF/upload/sign/image/" + userId + "/" + filename;
+					String relativePath = "/WEB-INF/file/sign/image/" + userId + "/" + filename;
 					image.setRelativePath(relativePath);
 					File file = new File(getServletContext().getRealPath(relativePath));
 					image.setAbsolutePath(file.getPath());
@@ -144,7 +144,7 @@ public class FileUploadServlet extends HttpServlet {
 				record.setContentType(fileItem.getContentType());
 				try {
 					InputStream inputStream = fileItem.getInputStream();
-					String relativePath = "/WEB-INF/upload/sign/record/" + userId + "/" + filename;
+					String relativePath = "/WEB-INF/file/sign/record/" + userId + "/" + filename;
 					record.setRelativePath(relativePath);
 					File file = new File(getServletContext().getRealPath(relativePath));
 					record.setAbsolutePath(file.getPath());

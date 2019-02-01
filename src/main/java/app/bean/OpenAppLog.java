@@ -26,8 +26,18 @@ public class OpenAppLog {
 	private String deviceJson;
 	private String ip;
 	private Date time;
-	@Column(length = 2000)
+	@Column(length = 1000)
 	private String userAgent;
+	@Column(length = 1000)
+	private String position;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
 	public Integer getUserId() {
 		return userId;
@@ -67,6 +77,20 @@ public class OpenAppLog {
 
 	public void setUserAgent(String userAgent) {
 		this.userAgent = userAgent;
+	}
+
+	public String getPosition() {
+		return position;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
+	}
+
+	@Override
+	public String toString() {
+		return "OpenAppLog [id=" + id + ", userId=" + userId + ", deviceJson=" + deviceJson + ", ip=" + ip + ", time="
+				+ time + ", userAgent=" + userAgent + ", position=" + position + "]";
 	}
 
 }

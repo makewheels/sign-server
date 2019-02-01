@@ -6,27 +6,36 @@ import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
 public class HibernateUtil {
-	private static Session session;
+	private static SessionFactory sessionFactory;
 
-	static {
-		Configuration configuration = new Configuration().configure();
-		SessionFactory sessionFactory = configuration.buildSessionFactory();
-		session = sessionFactory.openSession();
+	/**
+	 * 初始化
+	 */
+	public static void init() {
+		if (sessionFactory == null) {
+			sessionFactory = new Configuration().configure().buildSessionFactory();
+		}
 	}
 
 	public static Session getSession() {
-		return session;
+		if (sessionFactory == null) {
+			init();
+		}
+		return sessionFactory.openSession();
 	}
 
 	/**
-	 * 根据逐渐查对象
+	 * 根据主键查对象
 	 * 
 	 * @param clazz
 	 * @param primaryKey
 	 * @return
 	 */
-	public static <T> T getObjectById(Class<T> clazz, Object primaryKey) {
-		return session.find(clazz, primaryKey);
+	public static <T> T findObjectById(Class<T> clazz, Object primaryKey) {
+		Session session = sessionFactory.openSession();
+		T findObject = session.find(clazz, primaryKey);
+		session.close();
+		return findObject;
 	}
 
 	/**
@@ -35,7 +44,9 @@ public class HibernateUtil {
 	 * @param object
 	 */
 	public static void save(Object object) {
+		Session session = sessionFactory.openSession();
 		session.save(object);
+		session.close();
 	}
 
 	/**
@@ -44,9 +55,11 @@ public class HibernateUtil {
 	 * @param object
 	 */
 	public static void update(Object object) {
+		Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
 		session.update(object);
 		transaction.commit();
+		session.close();
 	}
 
 }

@@ -25,7 +25,7 @@ public class LoginLog {
 	private Integer userId;// 用户id
 	private Date time;
 	private String ip;
-	@Column(length = 2000)
+	@Column(length = 1000)
 	private String userAgent;
 	@Column(length = 2000)
 	private String deviceJson;

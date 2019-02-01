@@ -1,6 +1,8 @@
 package user;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,6 +25,7 @@ import user.bean.UserDetail;
 import user.bean.login.LoginLog;
 import user.bean.login.qq.QQAuthRoot;
 import util.HibernateUtil;
+import util.QcloudCosUtil;
 import util.ResponseUtil;
 
 /**
@@ -78,7 +82,23 @@ public class UserServlet extends HttpServlet {
 			user.setLoginToken(loginToken);
 			user.setQqOpenid(qqOpenid);
 			user.setUuid(UUID.randomUUID().toString());
+			// QQ头像
+			String qqAvatarUrl = qqAuthRoot.getUserInfo().getFigureurl_qq_2();
 			HibernateUtil.save(user);
+			// 下载头像
+			String avatarRelativePath = "/WEB-INF/file/avatar/" + user.getId() + ".png";
+			String avatarAbsolutePath = getServletContext().getRealPath(avatarRelativePath);
+			File avatarFile = new File(avatarAbsolutePath);
+			try {
+				FileUtils.copyURLToFile(new URL(qqAvatarUrl), avatarFile);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			String avatarObjectStorgeKey = "/avatar/" + UUID.randomUUID().toString() + ".png";
+			String avatarUrl = QcloudCosUtil.saveToQcloud(avatarFile, avatarObjectStorgeKey);
+			user.setAvatarUrl(avatarUrl);
+			// 更新user头像url
+			HibernateUtil.update(user);
 			UserDetail userDetail = new UserDetail();
 			userDetail.setUserId(user.getId());
 			userDetail.setRegistIp(request.getRemoteAddr());
@@ -86,6 +106,9 @@ public class UserServlet extends HttpServlet {
 			userDetail.setRegistType("qq");
 			userDetail.setRegistUserAgent(request.getHeader("User-Agent"));
 			userDetail.setQqAuthJson(authJson);
+			userDetail.setAvatarAbsolutePath(avatarAbsolutePath);
+			userDetail.setAvatarRelativePath(avatarRelativePath);
+			userDetail.setAvatarObjectStorgeKey(avatarObjectStorgeKey);
 			HibernateUtil.save(userDetail);
 		} else {
 			// 如果已经存在此QQ用户
@@ -134,7 +157,6 @@ public class UserServlet extends HttpServlet {
 		// 刷新loginToken
 		String refreshLoginToken = RandomStringUtils.randomAlphanumeric(50);
 		user.setLoginToken(refreshLoginToken);
-		System.out.println(user);
 		HibernateUtil.update(user);
 		// 登录日志
 		LoginLog loginLog = new LoginLog();

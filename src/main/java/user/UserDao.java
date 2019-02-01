@@ -8,7 +8,6 @@ import util.HibernateUtil;
 
 @SuppressWarnings("unchecked")
 public class UserDao {
-	private Session session = HibernateUtil.getSession();
 
 	/**
 	 * 根据QQopenid找用户
@@ -16,9 +15,12 @@ public class UserDao {
 	 * @return
 	 */
 	public User findUserByQQopenid(String qqOpenid) {
+		Session session = HibernateUtil.getSession();
 		Query<User> query = session.createQuery("from User where qqOpenid=?1");
 		query.setParameter(1, qqOpenid);
-		return query.uniqueResult();
+		User user = query.uniqueResult();
+		session.close();
+		return user;
 	}
 
 	/**
@@ -29,16 +31,12 @@ public class UserDao {
 	 * @return
 	 */
 	public User findUserByLoginToken(String loginToken) {
+		Session session = HibernateUtil.getSession();
 		Query<User> query = session.createQuery("from User where loginToken=?1");
 		query.setParameter(1, loginToken);
-		return query.uniqueResult();
-	}
-
-	/**
-	 * 根据id主键查用户
-	 */
-	public User findUserById(Integer id) {
-		return session.find(User.class, id);
+		User user = query.uniqueResult();
+		session.close();
+		return user;
 	}
 
 }

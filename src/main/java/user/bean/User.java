@@ -1,15 +1,10 @@
 package user.bean;
 
-import java.util.Set;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-
-import mission.bean.Mission;
 
 /**
  * 用户
@@ -28,8 +23,7 @@ public class User {
 	private String loginToken;
 	private String qqOpenid;
 	private Integer currentMissionId;
-	@ManyToMany
-	private Set<Mission> missionSet;
+	private String avatarUrl;
 
 	public Integer getId() {
 		return id;
@@ -79,19 +73,12 @@ public class User {
 		this.currentMissionId = currentMissionId;
 	}
 
-	public Set<Mission> getMissionSet() {
-		return missionSet;
+	public String getAvatarUrl() {
+		return avatarUrl;
 	}
 
-	public void setMissionSet(Set<Mission> missionSet) {
-		this.missionSet = missionSet;
-	}
-
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", uuid=" + uuid + ", nickname=" + nickname + ", loginToken=" + loginToken
-				+ ", qqOpenid=" + qqOpenid + ", currentMissionId=" + currentMissionId + ", missionSet=" + missionSet
-				+ "]";
+	public void setAvatarUrl(String avatarUrl) {
+		this.avatarUrl = avatarUrl;
 	}
 
 }

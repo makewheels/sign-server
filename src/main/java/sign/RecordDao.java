@@ -8,12 +8,14 @@ import util.HibernateUtil;
 
 @SuppressWarnings("unchecked")
 public class RecordDao {
-	private Session session = HibernateUtil.getSession();
 
 	public Record getRecordByUuid(String uuid) {
+		Session session = HibernateUtil.getSession();
 		Query<Record> query = session.createQuery("from Record where uuid=?1");
 		query.setParameter(1, uuid);
-		return query.uniqueResult();
+		Record record = query.uniqueResult();
+		session.close();
+		return record;
 	}
 
 }
