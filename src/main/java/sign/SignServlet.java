@@ -170,6 +170,7 @@ public class SignServlet extends HttpServlet {
 		signLog.setTime(new Date());
 		signLog.setImageId(image.getId());
 		signLog.setRecordId(record.getId());
+		signLog.setPosition(request.getParameter("position"));
 		// 保存签到记录
 		HibernateUtil.save(signLog);
 		Integer signLogId = signLog.getId();

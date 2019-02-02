@@ -2,6 +2,7 @@ package sign.bean;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,6 +32,8 @@ public class SignLog {
 	private Date time;
 	private Integer imageId;// 图片文件id
 	private Integer recordId;// 录音文件id
+	@Column(length = 1000)
+	private String position;// 地理位置
 
 	public Integer getId() {
 		return id;
@@ -126,6 +129,14 @@ public class SignLog {
 
 	public void setRecordId(Integer recordId) {
 		this.recordId = recordId;
+	}
+
+	public String getPosition() {
+		return position;
+	}
+
+	public void setPosition(String position) {
+		this.position = position;
 	}
 
 }

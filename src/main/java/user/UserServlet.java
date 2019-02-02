@@ -75,8 +75,11 @@ public class UserServlet extends HttpServlet {
 		User user = userDao.findUserByQQopenid(qqOpenid);
 		String loginToken = RandomStringUtils.randomAlphanumeric(50);
 		// 先注册或更新loginToken，再登录
+		// 是否是新用户
+		boolean isNewUser = false;
 		// 如果没有此QQ用户，注册新用户
 		if (user == null) {
+			isNewUser = true;
 			user = new User();
 			user.setNickname(qqAuthRoot.getUserInfo().getNickname());
 			user.setLoginToken(loginToken);
@@ -130,8 +133,14 @@ public class UserServlet extends HttpServlet {
 		loginLog.setUserId(user.getId());
 		HibernateUtil.save(loginLog);
 		// 回写
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("loginToken", loginToken);
+		// 如果是新用户，上报通讯录
+		if (isNewUser) {
+			map.put("reportContacts", true);
+		} else {
+			map.put("reportContacts", false);
+		}
 		ResponseUtil.writeJson(response, map);
 	}
 

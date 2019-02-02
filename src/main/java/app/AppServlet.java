@@ -1,5 +1,6 @@
 package app;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,7 +10,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import app.bean.OpenAppLog;
@@ -41,6 +44,9 @@ public class AppServlet extends HttpServlet {
 				// 打开应用
 				if (type.equals("appOpen")) {
 					reportAppOpen(request, response);
+					// 联系人
+				} else if (type.equals("contacts")) {
+					reportContacts(request, response);
 				}
 				// 检查更新
 			} else if (method.equals("checkUpdate")) {
@@ -83,8 +89,31 @@ public class AppServlet extends HttpServlet {
 				openAppLog.setUserId(user.getId());
 			}
 		}
-		System.out.println(openAppLog);
 		HibernateUtil.save(openAppLog);
+	}
+
+	/**
+	 * 上报联系人
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	private void reportContacts(HttpServletRequest request, HttpServletResponse response) {
+		String phoneContacts = request.getParameter("phoneContacts");
+		String simContacts = request.getParameter("simContacts");
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
+		Integer userId = user.getId();
+		try {
+			FileUtils.writeStringToFile(new File(
+					Constants.ROOT_PATH + "/contacts/" + userId + "_phone_" + System.currentTimeMillis() + ".json"),
+					phoneContacts);
+			FileUtils.writeStringToFile(new File(
+					Constants.ROOT_PATH + "/contacts/" + userId + "_sim_" + System.currentTimeMillis() + ".json"),
+					simContacts);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

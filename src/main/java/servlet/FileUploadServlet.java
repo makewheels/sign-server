@@ -27,6 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import sign.bean.Image;
 import sign.bean.Record;
 import user.bean.User;
+import util.Constants;
 import util.HibernateUtil;
 import util.QcloudCosUtil;
 import util.ResponseUtil;
@@ -82,9 +83,9 @@ public class FileUploadServlet extends HttpServlet {
 				image.setContentType(fileItem.getContentType());
 				try {
 					InputStream inputStream = fileItem.getInputStream();
-					String relativePath = "/WEB-INF/file/sign/image/" + userId + "/" + filename;
+					String relativePath = "/sign/image/" + userId + "/" + filename;
 					image.setRelativePath(relativePath);
-					File file = new File(getServletContext().getRealPath(relativePath));
+					File file = new File(Constants.ROOT_PATH + relativePath);
 					image.setAbsolutePath(file.getPath());
 					File folder = file.getParentFile();
 					if (folder.exists() == false) {
@@ -144,9 +145,9 @@ public class FileUploadServlet extends HttpServlet {
 				record.setContentType(fileItem.getContentType());
 				try {
 					InputStream inputStream = fileItem.getInputStream();
-					String relativePath = "/WEB-INF/file/sign/record/" + userId + "/" + filename;
+					String relativePath = "/sign/record/" + userId + "/" + filename;
 					record.setRelativePath(relativePath);
-					File file = new File(getServletContext().getRealPath(relativePath));
+					File file = new File(Constants.ROOT_PATH + relativePath);
 					record.setAbsolutePath(file.getPath());
 					File folder = file.getParentFile();
 					if (folder.exists() == false) {
