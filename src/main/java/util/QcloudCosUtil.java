@@ -12,7 +12,7 @@ import com.qcloud.cos.region.Region;
 
 public class QcloudCosUtil {
 	private static COSClient cosClient;
-	private static String bucketName = "sign-1253319037";
+	private static String bucketName = "sign-dev-1253319037";
 
 	static {
 		COSCredentials cosCredentials = new BasicCOSCredentials("AKIDPn393lzFcnmcGnnV7WknofR1QcdSmjld",
