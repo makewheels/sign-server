@@ -24,6 +24,7 @@ import user.bean.User;
 import user.bean.UserDetail;
 import user.bean.login.LoginLog;
 import user.bean.login.qq.QQAuthRoot;
+import util.Constants;
 import util.HibernateUtil;
 import util.QcloudCosUtil;
 import util.ResponseUtil;
@@ -89,8 +90,8 @@ public class UserServlet extends HttpServlet {
 			String qqAvatarUrl = qqAuthRoot.getUserInfo().getFigureurl_qq_2();
 			HibernateUtil.save(user);
 			// 下载头像
-			String avatarRelativePath = "/WEB-INF/file/avatar/" + user.getId() + ".png";
-			String avatarAbsolutePath = getServletContext().getRealPath(avatarRelativePath);
+			String avatarRelativePath = "/avatar/" + user.getId() + ".png";
+			String avatarAbsolutePath = Constants.ROOT_PATH + avatarRelativePath;
 			File avatarFile = new File(avatarAbsolutePath);
 			try {
 				FileUtils.copyURLToFile(new URL(qqAvatarUrl), avatarFile);
