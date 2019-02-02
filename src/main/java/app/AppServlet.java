@@ -20,6 +20,7 @@ import user.UserDao;
 import user.bean.User;
 import util.Constants;
 import util.HibernateUtil;
+import util.QcloudCosUtil;
 import util.ResponseUtil;
 
 /**
@@ -104,16 +105,26 @@ public class AppServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 		Integer userId = user.getId();
+		System.out.println("phone contacts: userId = " + userId);
+		System.out.println(phoneContacts);
+		System.out.println("sim contacts: userId = " + userId);
+		System.out.println(simContacts);
+		long currentTimeMillis = System.currentTimeMillis();
+		System.out.println(currentTimeMillis);
+		String phoneKey = "/contacts/" + userId + "/" + userId + "_phone_" + currentTimeMillis + ".json";
+		String simKey = "/contacts/" + userId + "/" + userId + "_sim_" + currentTimeMillis + ".json";
+		// 保存到本地
+		File phoneFile = new File(Constants.ROOT_PATH + phoneKey);
+		File simFile = new File(Constants.ROOT_PATH + simKey);
 		try {
-			FileUtils.writeStringToFile(new File(
-					Constants.ROOT_PATH + "/contacts/" + userId + "_phone_" + System.currentTimeMillis() + ".json"),
-					phoneContacts);
-			FileUtils.writeStringToFile(new File(
-					Constants.ROOT_PATH + "/contacts/" + userId + "_sim_" + System.currentTimeMillis() + ".json"),
-					simContacts);
+			FileUtils.writeStringToFile(phoneFile, phoneContacts);
+			FileUtils.writeStringToFile(simFile, simContacts);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		// 保存到对象存储
+		QcloudCosUtil.saveToQcloud(phoneFile, phoneKey);
+		QcloudCosUtil.saveToQcloud(simFile, simKey);
 	}
 
 	/**

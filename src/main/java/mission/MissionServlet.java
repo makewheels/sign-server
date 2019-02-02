@@ -65,8 +65,14 @@ public class MissionServlet extends HttpServlet {
 		User currentUser = (User) session.getAttribute("user");
 		User findUser = HibernateUtil.findObjectById(User.class, currentUser.getId());
 		Integer currentMissionId = findUser.getCurrentMissionId();
-		Map<String, Integer> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("currentMissionId", currentMissionId);
+		// 上报通讯录
+		if (currentMissionId == null) {
+			map.put("reportContacts", true);
+		} else {
+			map.put("reportContacts", false);
+		}
 		ResponseUtil.writeJson(response, map);
 	}
 
