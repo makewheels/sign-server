@@ -21,6 +21,7 @@ public class SignLog {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	private String uuid;
 	private Integer userId;
 	private Integer missionId;
 	private Integer startHour;
@@ -41,6 +42,14 @@ public class SignLog {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
 	}
 
 	public Integer getUserId() {

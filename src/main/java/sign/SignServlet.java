@@ -3,12 +3,14 @@ package sign;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -17,10 +19,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
+
+import com.alibaba.fastjson.JSON;
 
 import mission.bean.Mission;
 import sign.bean.Image;
 import sign.bean.Record;
+import sign.bean.ReturnClientSignLogList;
 import sign.bean.SignLog;
 import user.bean.User;
 import util.HibernateUtil;
@@ -44,6 +50,9 @@ public class SignServlet extends HttpServlet {
 				// 执行签到
 			} else if (method.equals("doSign")) {
 				doSign(request, response);
+				// 查询签到记录
+			} else if (method.equals("find")) {
+				queryLoginLog(request, response);
 			}
 		}
 	}
@@ -96,7 +105,7 @@ public class SignServlet extends HttpServlet {
 		// 截止时间
 		LocalTime endTime = LocalTime.of(endHour, endMinute); // 比较时间
 		// 该任务今天所有在时间范围内的签到记录
-		List<SignLog> signLogList = signLogDao.findTodayInTimeRangeSignLog(missionId);
+		List<SignLog> signLogList = signLogDao.findTodayInTimeRange(missionId);
 		// 先看该用户今天签到了没有
 		boolean isTodaySigned = false;
 		for (SignLog signLog : signLogList) {
@@ -149,6 +158,7 @@ public class SignServlet extends HttpServlet {
 		Image image = imageDao.getImageByUuid(request.getParameter("imageUuid"));
 		Record record = recordDao.getRecordByUuid(request.getParameter("recordUuid"));
 		SignLog signLog = new SignLog();
+		signLog.setUuid(UUID.randomUUID().toString());
 		signLog.setUserId(userId);
 		signLog.setMissionId(mission.getId());
 		// 设置时间范围
@@ -184,4 +194,39 @@ public class SignServlet extends HttpServlet {
 		map.put("state", "ok");
 		ResponseUtil.writeJson(response, map);
 	}
+
+	/**
+	 * 查询签到记录
+	 * 
+	 * @param who
+	 * @param valid
+	 */
+	private void queryLoginLog(HttpServletRequest request, HttpServletResponse response) {
+		// 查询条件
+		// 查谁
+		String who = request.getParameter("who");
+		// 有效性
+		String valid = request.getParameter("valid");
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
+		Integer userId = user.getId();
+		String avatarUrl = user.getAvatarUrl();
+		String nickname = user.getNickname();
+		Integer currentMissionId = user.getCurrentMissionId();
+		List<ReturnClientSignLogList> result = new ArrayList<>();
+		// 执行查询
+		List<SignLog> findList = signLogDao.findByCondition(currentMissionId, who, userId, valid);
+		for (SignLog signLog : findList) {
+			ReturnClientSignLogList returnClientSignLogList = new ReturnClientSignLogList();
+			returnClientSignLogList.setSignLogUuid(signLog.getUuid());
+			returnClientSignLogList.setAvatarUrl(avatarUrl);
+			returnClientSignLogList.setNickname(nickname);
+			returnClientSignLogList.setSignTime(DateFormatUtils.format(signLog.getTime(), "yyyy-MM-dd HH:mm:ss"));
+			returnClientSignLogList.setValid(signLog.getInTimeRange());
+			result.add(returnClientSignLogList);
+		}
+		System.out.println(JSON.toJSONString(result));
+		ResponseUtil.writeJson(response, result);
+	}
+
 }

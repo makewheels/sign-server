@@ -135,15 +135,19 @@ public class AppServlet extends HttpServlet {
 	 */
 	private void checkUpdate(HttpServletRequest request, HttpServletResponse response) {
 		Map<String, Object> map = new HashMap<>();
-		String clientVersion = request.getParameter("version");
 		// 比较版本，如果相等，不需要更新
-		if (Constants.APP_VERSION.equals(clientVersion) == true) {
-			map.put("needUpdate", false);
-			// 如果不相等，告知安装包下载地址
-		} else {
-			map.put("needUpdate", true);
-			map.put("url", "");
-		}
+//		String clientVersion = request.getParameter("version");
+//		if (clientVersion.equals(Constants.APP_VERSION) == true) {
+//			map.put("needUpdate", false);
+//			// 如果不相等，告知安装包下载地址
+//		} else {
+//			map.put("needUpdate", true);
+//			map.put("url", "");
+//		}
+
+		// 不验证更新
+		map.put("needUpdate", false);
+
 		map.put("latestVersion", Constants.APP_VERSION);
 		ResponseUtil.writeJson(response, map);
 	}
