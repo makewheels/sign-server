@@ -21,8 +21,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
-import com.alibaba.fastjson.JSON;
-
 import mission.bean.Mission;
 import sign.bean.Image;
 import sign.bean.Record;
@@ -210,8 +208,6 @@ public class SignServlet extends HttpServlet {
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 		Integer userId = user.getId();
-		String avatarUrl = user.getAvatarUrl();
-		String nickname = user.getNickname();
 		Integer currentMissionId = user.getCurrentMissionId();
 		List<ReturnClientSignLogList> result = new ArrayList<>();
 		// 执行查询
@@ -219,13 +215,15 @@ public class SignServlet extends HttpServlet {
 		for (SignLog signLog : findList) {
 			ReturnClientSignLogList returnClientSignLogList = new ReturnClientSignLogList();
 			returnClientSignLogList.setSignLogUuid(signLog.getUuid());
-			returnClientSignLogList.setAvatarUrl(avatarUrl);
-			returnClientSignLogList.setNickname(nickname);
+			// 签到的用户
+			User signUser = HibernateUtil.findObjectById(User.class, signLog.getUserId());
+			// 头像
+			returnClientSignLogList.setAvatarUrl(signUser.getAvatarUrl());
+			returnClientSignLogList.setNickname(signUser.getNickname());
 			returnClientSignLogList.setSignTime(DateFormatUtils.format(signLog.getTime(), "yyyy-MM-dd HH:mm:ss"));
 			returnClientSignLogList.setValid(signLog.getInTimeRange());
 			result.add(returnClientSignLogList);
 		}
-		System.out.println(JSON.toJSONString(result));
 		ResponseUtil.writeJson(response, result);
 	}
 
