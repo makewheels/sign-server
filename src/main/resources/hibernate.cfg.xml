@@ -27,6 +27,7 @@
 		<mapping class="sign.bean.Image" />
 		<mapping class="sign.bean.Record" />
 		<mapping class="mission.bean.UserMission" />
+		<mapping class="sign.bean.SignPushLog" />
 
 	</session-factory>
 </hibernate-configuration>

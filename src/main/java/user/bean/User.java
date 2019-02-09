@@ -24,6 +24,7 @@ public class User {
 	private String qqOpenid;
 	private Integer currentMissionId;
 	private String avatarUrl;
+	private String pushClientId;
 
 	public Integer getId() {
 		return id;
@@ -79,6 +80,14 @@ public class User {
 
 	public void setAvatarUrl(String avatarUrl) {
 		this.avatarUrl = avatarUrl;
+	}
+
+	public String getPushClientId() {
+		return pushClientId;
+	}
+
+	public void setPushClientId(String pushClientId) {
+		this.pushClientId = pushClientId;
 	}
 
 }

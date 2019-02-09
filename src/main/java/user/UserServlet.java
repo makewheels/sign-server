@@ -73,8 +73,9 @@ public class UserServlet extends HttpServlet {
 		String authJson = request.getParameter("auth");
 		QQAuthRoot qqAuthRoot = JSON.parseObject(authJson, QQAuthRoot.class);
 		String qqOpenid = qqAuthRoot.getAuthResult().getOpenid();
-		User user = userDao.findUserByQQopenid(qqOpenid);
+		User user = userDao.findUserByQQOpenid(qqOpenid);
 		String loginToken = RandomStringUtils.randomAlphanumeric(50);
+		String pushClientId = request.getParameter("pushClientId");
 		// 先注册或更新loginToken，再登录
 		// 是否是新用户
 		boolean isNewUser = false;
@@ -86,6 +87,7 @@ public class UserServlet extends HttpServlet {
 			user.setLoginToken(loginToken);
 			user.setQqOpenid(qqOpenid);
 			user.setUuid(UUID.randomUUID().toString());
+			user.setPushClientId(pushClientId);
 			// QQ头像
 			String qqAvatarUrl = qqAuthRoot.getUserInfo().getFigureurl_qq_2();
 			HibernateUtil.save(user);
@@ -117,6 +119,8 @@ public class UserServlet extends HttpServlet {
 		} else {
 			// 如果已经存在此QQ用户
 			user.setLoginToken(loginToken);
+			// 更新推送clientId
+			user.setPushClientId(pushClientId);
 			// 更新loginToken
 			HibernateUtil.update(user);
 		}

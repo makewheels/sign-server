@@ -21,20 +21,25 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
+import com.gexin.fastjson.JSON;
+
 import mission.bean.Mission;
 import sign.bean.Image;
 import sign.bean.Record;
 import sign.bean.ReturnClientSignLogList;
 import sign.bean.SignLog;
+import sign.bean.SignPushLog;
+import user.UserDao;
 import user.bean.User;
 import util.HibernateUtil;
+import util.PushUtil;
 import util.ResponseUtil;
 
 public class SignServlet extends HttpServlet {
 	private static final long serialVersionUID = -412797394793347434L;
 
+	private UserDao userDao = new UserDao();
 	private SignLogDao signLogDao = new SignLogDao();
-
 	private ImageDao imageDao = new ImageDao();
 	private RecordDao recordDao = new RecordDao();
 
@@ -191,6 +196,27 @@ public class SignServlet extends HttpServlet {
 		Map<String, String> map = new HashMap<>();
 		map.put("state", "ok");
 		ResponseUtil.writeJson(response, map);
+		// 推送消息通知其它人
+		List<User> userList = userDao.findUserByCurrentMissionId(user.getCurrentMissionId());
+		// 遍历通知
+		for (User eachUser : userList) {
+			String clientId = eachUser.getPushClientId();
+			// 不是当前签到用户
+			if (eachUser.getId() != userId && clientId != null) {
+				String title = user.getNickname() + " 已签到";
+				String text = "签到时间：" + DateFormatUtils.format(signLog.getTime(), "yyyy-MM-dd hh:mm:ss");
+				Map<String, Object> resultMap = PushUtil.pushByClientId(clientId, title, text, user.getAvatarUrl());
+				SignPushLog signPushLog = new SignPushLog();
+				signPushLog.setPushUserId(eachUser.getId());
+				signPushLog.setSignLogId(signLog.getId());
+				signPushLog.setPushClientId(clientId);
+				signPushLog.setTime(new Date());
+				signPushLog.setTitle(title);
+				signPushLog.setText(text);
+				signPushLog.setResponseJson(JSON.toJSONString(resultMap));
+				HibernateUtil.save(signPushLog);
+			}
+		}
 	}
 
 	/**

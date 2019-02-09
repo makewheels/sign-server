@@ -1,5 +1,7 @@
 package user;
 
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
@@ -14,7 +16,7 @@ public class UserDao {
 	 * 
 	 * @return
 	 */
-	public User findUserByQQopenid(String qqOpenid) {
+	public User findUserByQQOpenid(String qqOpenid) {
 		Session session = HibernateUtil.getSession();
 		Query<User> query = session.createQuery("from User where qqOpenid=?1");
 		query.setParameter(1, qqOpenid);
@@ -39,4 +41,18 @@ public class UserDao {
 		return user;
 	}
 
+	/**
+	 * 根据当前任务id找用户
+	 * 
+	 * @param currentMissionId
+	 * @return
+	 */
+	public List<User> findUserByCurrentMissionId(Integer currentMissionId) {
+		Session session = HibernateUtil.getSession();
+		Query<User> query = session.createQuery("from User where currentMissionId=?1");
+		query.setParameter(1, currentMissionId);
+		List<User> list = query.list();
+		session.close();
+		return list;
+	}
 }
