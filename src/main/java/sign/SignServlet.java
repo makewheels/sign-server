@@ -21,7 +21,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 
-import com.gexin.fastjson.JSON;
+import com.alibaba.fastjson.JSON;
 
 import mission.bean.Mission;
 import sign.bean.Image;
@@ -29,8 +29,10 @@ import sign.bean.Record;
 import sign.bean.ReturnClientSignLogList;
 import sign.bean.SignLog;
 import sign.bean.SignPushLog;
+import sign.bean.baiduaip.Result;
 import user.UserDao;
 import user.bean.User;
+import util.BaiduAipUtil;
 import util.HibernateUtil;
 import util.PushUtil;
 import util.ResponseUtil;
@@ -188,35 +190,51 @@ public class SignServlet extends HttpServlet {
 		HibernateUtil.save(signLog);
 		Integer signLogId = signLog.getId();
 		image.setSignLogId(signLogId);
-		// 更新文件签到记录id
+		// 更新文件的签到记录id
 		HibernateUtil.update(image);
 		record.setSignLogId(signLogId);
 		HibernateUtil.update(record);
+
 		// 回写客户端
 		Map<String, String> map = new HashMap<>();
 		map.put("state", "ok");
 		ResponseUtil.writeJson(response, map);
-		// 推送消息通知其它人
-		List<User> userList = userDao.findUserByCurrentMissionId(user.getCurrentMissionId());
-		// 遍历通知
-		for (User eachUser : userList) {
-			String clientId = eachUser.getPushClientId();
-			// 不是当前签到用户
-			if (eachUser.getId() != userId && clientId != null) {
-				String title = user.getNickname() + " 已签到";
-				String text = "签到时间：" + DateFormatUtils.format(signLog.getTime(), "yyyy-MM-dd hh:mm:ss");
-				Map<String, Object> resultMap = PushUtil.pushByClientId(clientId, title, text, user.getAvatarUrl());
-				SignPushLog signPushLog = new SignPushLog();
-				signPushLog.setPushUserId(eachUser.getId());
-				signPushLog.setSignLogId(signLog.getId());
-				signPushLog.setPushClientId(clientId);
-				signPushLog.setTime(new Date());
-				signPushLog.setTitle(title);
-				signPushLog.setText(text);
-				signPushLog.setResponseJson(JSON.toJSONString(resultMap));
-				HibernateUtil.save(signPushLog);
-			}
-		}
+
+		// 再开线程异步完成签到后续工作
+		new Thread() {
+			public void run() {
+				// 语音识别
+				String resultJson = BaiduAipUtil.recognizeAudio(record.getAbsolutePath());
+				record.setAudioRecognitionJson(resultJson);
+				Result result = JSON.parseObject(resultJson, Result.class);
+				record.setAudioRecognitionResult(result.getResult().get(0));
+				// 更新语音识别结果
+				HibernateUtil.update(record);
+
+				// 推送消息通知其它人
+				List<User> userList = userDao.findUserByCurrentMissionId(user.getCurrentMissionId());
+				// 遍历用户通知
+				for (User eachUser : userList) {
+					String clientId = eachUser.getPushClientId();
+					// 不是当前签到用户
+					if (eachUser.getId() != userId && clientId != null) {
+						String title = user.getNickname() + " 已签到";
+						String text = "签到时间：" + DateFormatUtils.format(signLog.getTime(), "yyyy-MM-dd hh:mm:ss");
+						Map<String, Object> resultMap = PushUtil.pushByClientId(clientId, title, text,
+								user.getAvatarUrl());
+						SignPushLog signPushLog = new SignPushLog();
+						signPushLog.setPushUserId(eachUser.getId());
+						signPushLog.setSignLogId(signLog.getId());
+						signPushLog.setPushClientId(clientId);
+						signPushLog.setTime(new Date());
+						signPushLog.setTitle(title);
+						signPushLog.setText(text);
+						signPushLog.setResponseJson(JSON.toJSONString(resultMap));
+						HibernateUtil.save(signPushLog);
+					}
+				}
+			};
+		}.start();
 	}
 
 	/**

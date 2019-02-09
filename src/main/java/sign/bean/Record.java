@@ -2,6 +2,7 @@ package sign.bean;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,6 +36,10 @@ public class Record {
 	private String objectStorageKey;
 	private String ip;
 	private Date createTime;
+	@Column(length = 1000)
+	private String audioRecognitionResult;// 语音识别最终结果
+	@Column(length = 1000)
+	private String audioRecognitionJson;// 语音识别json
 
 	public Integer getId() {
 		return id;
@@ -162,6 +167,22 @@ public class Record {
 
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
+	}
+
+	public String getAudioRecognitionResult() {
+		return audioRecognitionResult;
+	}
+
+	public void setAudioRecognitionResult(String audioRecognitionResult) {
+		this.audioRecognitionResult = audioRecognitionResult;
+	}
+
+	public String getAudioRecognitionJson() {
+		return audioRecognitionJson;
+	}
+
+	public void setAudioRecognitionJson(String audioRecognitionJson) {
+		this.audioRecognitionJson = audioRecognitionJson;
 	}
 
 }
