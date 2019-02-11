@@ -204,13 +204,16 @@ public class SignServlet extends HttpServlet {
 		new Thread() {
 			public void run() {
 				// 语音识别
-				String resultJson = BaiduAipUtil.recognizeAudio(record.getAbsolutePath());
-				record.setAudioRecognitionJson(resultJson);
-				Result result = JSON.parseObject(resultJson, Result.class);
-				record.setAudioRecognitionResult(result.getResult().get(0));
-				// 更新语音识别结果
-				HibernateUtil.update(record);
-
+				try {
+					String resultJson = BaiduAipUtil.recognizeAudio(record.getAbsolutePath());
+					record.setAudioRecognitionJson(resultJson);
+					Result result = JSON.parseObject(resultJson, Result.class);
+					record.setAudioRecognitionResult(result.getResult().get(0));
+					// 更新语音识别结果
+					HibernateUtil.update(record);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 				// 推送消息通知其它人
 				List<User> userList = userDao.findUserByCurrentMissionId(user.getCurrentMissionId());
 				// 遍历用户通知

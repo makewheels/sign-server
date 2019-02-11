@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.query.Query;
 
 import user.bean.User;
+import user.bean.UserDetail;
 import util.HibernateUtil;
 
 @SuppressWarnings("unchecked")
@@ -54,5 +55,20 @@ public class UserDao {
 		List<User> list = query.list();
 		session.close();
 		return list;
+	}
+
+	/**
+	 * 根据userId查找用户详情
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public UserDetail findUserDetailByUserId(Integer userId) {
+		Session session = HibernateUtil.getSession();
+		Query<UserDetail> query = session.createQuery("from UserDetail where userId=?1");
+		query.setParameter(1, userId);
+		UserDetail userDetail = query.uniqueResult();
+		session.close();
+		return userDetail;
 	}
 }

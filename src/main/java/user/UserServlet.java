@@ -17,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 
 import com.alibaba.fastjson.JSON;
 
@@ -54,6 +55,9 @@ public class UserServlet extends HttpServlet {
 				} else if (type.equals("loginToken")) {
 					loginByLoginToken(request, response);
 				}
+				// 用户信息
+			} else if (method.equals("getUserInfo")) {
+				getUserInfo(request, response);
 			}
 		}
 	}
@@ -190,4 +194,22 @@ public class UserServlet extends HttpServlet {
 		map.put("loginToken", refreshLoginToken);
 		ResponseUtil.writeJson(response, map);
 	}
+
+	/**
+	 * 用户信息
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	private void getUserInfo(HttpServletRequest request, HttpServletResponse response) {
+		User user = (User) request.getSession().getAttribute("user");
+		UserDetail userDetail = userDao.findUserDetailByUserId(user.getId());
+		// 回写
+		Map<String, String> map = new HashMap<>();
+		map.put("avatarUrl", user.getAvatarUrl());
+		map.put("nickname", user.getNickname());
+		map.put("registTime", DateFormatUtils.format(userDetail.getRegistTime(), Constants.DATE_FORMAT_PATTERN));
+		ResponseUtil.writeJson(response, map);
+	}
+
 }

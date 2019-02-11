@@ -31,8 +31,9 @@ public class BaiduAipUtil {
 	}
 
 	public static void main(String[] args) {
-		String recognizeAudio = recognizeAudio("C:\\mysoftware\\tomcatFiles\\sign-app\\sign\\record\\1\\"
-				+ "1ed8fdf7-e88d-4732-aa51-8c8c5e803a5f.amr");
+		String filepath = "C:\\mysoftware\\tomcatFiles\\sign-app\\sign\\record\\2\\"
+				+ "09c58cbe-94b6-4f65-abc7-2fb1a5500673.amr";
+		String recognizeAudio = recognizeAudio(filepath);
 		System.out.println(recognizeAudio);
 	}
 

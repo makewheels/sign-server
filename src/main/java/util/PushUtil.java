@@ -70,4 +70,13 @@ public class PushUtil {
 		return result.getResponse();
 	}
 
+	public static void main(String[] args) {
+		System.out.println(pushByClientId("e008beca623c4d6b85e0e78b7cb99b5c", "AGAIN", "teaefng",
+				"https://sign-1253319037.file.myqcloud.com/avatar/3b3610ad-7501-4644-8bf4-7642107ba92c.png"));
+		System.out.println(pushByClientId("86c4420962b287af6b37c46399b3ae50", "AGAIN", "teaefng",
+				"https://sign-1253319037.file.myqcloud.com/avatar/3b3610ad-7501-4644-8bf4-7642107ba92c.png"));
+		System.out.println(getOnlineStatus("e008beca623c4d6b85e0e78b7cb99b5c"));
+		System.out.println(getOnlineStatus("86c4420962b287af6b37c46399b3ae50"));
+	}
+
 }
