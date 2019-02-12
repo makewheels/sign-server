@@ -75,4 +75,18 @@ public class SignLogDao {
 		session.close();
 		return list;
 	}
+
+	/**
+	 * 根据uuid找签到记录
+	 * 
+	 * @param signUuid
+	 */
+	public SignLog findSignLogByUuid(String signUuid) {
+		Session session = HibernateUtil.getSession();
+		Query<SignLog> query = session.createQuery("from SignLog where uuid=?1");
+		query.setParameter(1, signUuid);
+		SignLog signLog = query.uniqueResult();
+		session.close();
+		return signLog;
+	}
 }

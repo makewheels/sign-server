@@ -26,10 +26,10 @@ import com.alibaba.fastjson.JSON;
 import mission.bean.Mission;
 import sign.bean.Image;
 import sign.bean.Record;
-import sign.bean.ReturnClientSignLogList;
 import sign.bean.SignLog;
 import sign.bean.SignPushLog;
 import sign.bean.baiduaip.Result;
+import sign.bean.returnclient.SignLogList;
 import user.UserDao;
 import user.bean.User;
 import util.BaiduAipUtil;
@@ -55,9 +55,12 @@ public class SignServlet extends HttpServlet {
 				// 执行签到
 			} else if (method.equals("doSign")) {
 				doSign(request, response);
-				// 查询签到记录
-			} else if (method.equals("find")) {
-				queryLoginLog(request, response);
+				// 查询签到记录列表
+			} else if (method.equals("getSignList")) {
+				getSignList(request, response);
+				// 查询单个签到记录详情
+			} else if (true) {
+				getSignDetail(request, response);
 			}
 		}
 	}
@@ -243,10 +246,10 @@ public class SignServlet extends HttpServlet {
 	/**
 	 * 查询签到记录
 	 * 
-	 * @param who
-	 * @param valid
+	 * @param request
+	 * @param response
 	 */
-	private void queryLoginLog(HttpServletRequest request, HttpServletResponse response) {
+	private void getSignList(HttpServletRequest request, HttpServletResponse response) {
 		// 查询条件
 		// 查谁
 		String who = request.getParameter("who");
@@ -256,22 +259,35 @@ public class SignServlet extends HttpServlet {
 		User user = (User) session.getAttribute("user");
 		Integer userId = user.getId();
 		Integer currentMissionId = user.getCurrentMissionId();
-		List<ReturnClientSignLogList> result = new ArrayList<>();
+		List<SignLogList> result = new ArrayList<>();
 		// 执行查询
 		List<SignLog> findList = signLogDao.findByCondition(currentMissionId, who, userId, valid);
 		for (SignLog signLog : findList) {
-			ReturnClientSignLogList returnClientSignLogList = new ReturnClientSignLogList();
-			returnClientSignLogList.setSignLogUuid(signLog.getUuid());
+			SignLogList signLogList = new SignLogList();
+			signLogList.setSignLogUuid(signLog.getUuid());
 			// 签到的用户
 			User signUser = HibernateUtil.findObjectById(User.class, signLog.getUserId());
 			// 头像
-			returnClientSignLogList.setAvatarUrl(signUser.getAvatarUrl());
-			returnClientSignLogList.setNickname(signUser.getNickname());
-			returnClientSignLogList.setSignTime(DateFormatUtils.format(signLog.getTime(), "yyyy-MM-dd HH:mm:ss"));
-			returnClientSignLogList.setValid(signLog.getInTimeRange());
-			result.add(returnClientSignLogList);
+			signLogList.setAvatarUrl(signUser.getAvatarUrl());
+			signLogList.setNickname(signUser.getNickname());
+			signLogList.setSignTime(DateFormatUtils.format(signLog.getTime(), "yyyy-MM-dd HH:mm:ss"));
+			signLogList.setValid(signLog.getInTimeRange());
+			result.add(signLogList);
 		}
 		ResponseUtil.writeJson(response, result);
+	}
+
+	/**
+	 * 单个签到记录详情页
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	private void getSignDetail(HttpServletRequest request, HttpServletResponse response) {
+		String signUuid = request.getParameter("signLogUuid");
+		SignLog signLog = signLogDao.findSignLogByUuid(signUuid);
+		String jsonString = JSON.toJSONString(signLog);
+		System.out.println(jsonString);
 	}
 
 }

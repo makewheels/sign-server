@@ -78,7 +78,7 @@ public class UserServlet extends HttpServlet {
 		QQAuthRoot qqAuthRoot = JSON.parseObject(authJson, QQAuthRoot.class);
 		String qqOpenid = qqAuthRoot.getAuthResult().getOpenid();
 		User user = userDao.findUserByQQOpenid(qqOpenid);
-		String loginToken = RandomStringUtils.randomAlphanumeric(50);
+		String loginToken = RandomStringUtils.randomAlphanumeric(50) + "_" + UUID.randomUUID().toString();
 		String pushClientId = request.getParameter("pushClientId");
 		// 先注册或更新loginToken，再登录
 		// 是否是新用户
