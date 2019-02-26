@@ -29,10 +29,13 @@ import sign.bean.Record;
 import sign.bean.SignLog;
 import sign.bean.SignPushLog;
 import sign.bean.baiduaip.Result;
-import sign.bean.returnclient.SignLogList;
+import sign.bean.position.Position;
+import sign.bean.responseclient.ClientSignLogDetail;
+import sign.bean.responseclient.ClientSignLogList;
 import user.UserDao;
 import user.bean.User;
 import util.BaiduAipUtil;
+import util.Constants;
 import util.HibernateUtil;
 import util.PushUtil;
 import util.ResponseUtil;
@@ -107,11 +110,11 @@ public class SignServlet extends HttpServlet {
 		// 我的签到状态
 		String mySignedStateString = "今日签到状态";
 		// 现在的时间
-		LocalTime currentTime = LocalTime.now();
+		LocalTime now = LocalTime.now();
 		// 开始时间
-		LocalTime startTime = LocalTime.of(startHour, startMinute);
+		LocalTime start = LocalTime.of(startHour, startMinute);
 		// 截止时间
-		LocalTime endTime = LocalTime.of(endHour, endMinute); // 比较时间
+		LocalTime end = LocalTime.of(endHour, endMinute); // 比较时间
 		// 该任务今天所有在时间范围内的签到记录
 		List<SignLog> signLogList = signLogDao.findTodayInTimeRange(missionId);
 		// 先看该用户今天签到了没有
@@ -126,10 +129,10 @@ public class SignServlet extends HttpServlet {
 		// 如果今天还没签到
 		if (isTodaySigned == false) {
 			// 如果还没到开始时间
-			if (currentTime.isBefore(startTime)) {
+			if (now.isBefore(start)) {
 				mySignedStateString = "签到尚未开始";
 				// 如果晚于开始时间
-			} else if (currentTime.isBefore(endTime)) {
+			} else if (now.isBefore(end)) {
 				mySignedStateString = "一日之计在于晨，正是签到好时机";
 				// 如果晚于截止时间
 			} else {
@@ -192,8 +195,8 @@ public class SignServlet extends HttpServlet {
 		// 保存签到记录
 		HibernateUtil.save(signLog);
 		Integer signLogId = signLog.getId();
-		image.setSignLogId(signLogId);
 		// 更新文件的签到记录id
+		image.setSignLogId(signLogId);
 		HibernateUtil.update(image);
 		record.setSignLogId(signLogId);
 		HibernateUtil.update(record);
@@ -221,17 +224,17 @@ public class SignServlet extends HttpServlet {
 				List<User> userList = userDao.findUserByCurrentMissionId(user.getCurrentMissionId());
 				// 遍历用户通知
 				for (User eachUser : userList) {
-					String clientId = eachUser.getPushClientId();
+					String pushClientId = eachUser.getPushClientId();
 					// 不是当前签到用户
-					if (eachUser.getId() != userId && clientId != null) {
+					if (eachUser.getId() != userId && pushClientId != null) {
 						String title = user.getNickname() + " 已签到";
 						String text = "签到时间：" + DateFormatUtils.format(signLog.getTime(), "yyyy-MM-dd hh:mm:ss");
-						Map<String, Object> resultMap = PushUtil.pushByClientId(clientId, title, text,
+						Map<String, Object> resultMap = PushUtil.pushByClientId(pushClientId, title, text,
 								user.getAvatarUrl());
 						SignPushLog signPushLog = new SignPushLog();
 						signPushLog.setPushUserId(eachUser.getId());
 						signPushLog.setSignLogId(signLog.getId());
-						signPushLog.setPushClientId(clientId);
+						signPushLog.setPushClientId(pushClientId);
 						signPushLog.setTime(new Date());
 						signPushLog.setTitle(title);
 						signPushLog.setText(text);
@@ -259,11 +262,11 @@ public class SignServlet extends HttpServlet {
 		User user = (User) session.getAttribute("user");
 		Integer userId = user.getId();
 		Integer currentMissionId = user.getCurrentMissionId();
-		List<SignLogList> result = new ArrayList<>();
+		List<ClientSignLogList> result = new ArrayList<>();
 		// 执行查询
 		List<SignLog> findList = signLogDao.findByCondition(currentMissionId, who, userId, valid);
 		for (SignLog signLog : findList) {
-			SignLogList signLogList = new SignLogList();
+			ClientSignLogList signLogList = new ClientSignLogList();
 			signLogList.setSignLogUuid(signLog.getUuid());
 			// 签到的用户
 			User signUser = HibernateUtil.findObjectById(User.class, signLog.getUserId());
@@ -286,8 +289,25 @@ public class SignServlet extends HttpServlet {
 	private void getSignDetail(HttpServletRequest request, HttpServletResponse response) {
 		String signUuid = request.getParameter("signLogUuid");
 		SignLog signLog = signLogDao.findSignLogByUuid(signUuid);
-		String jsonString = JSON.toJSONString(signLog);
-		System.out.println(jsonString);
+		ClientSignLogDetail clientSignLogDetail = new ClientSignLogDetail();
+		clientSignLogDetail.setSignLogUuid(signUuid);
+		Image image = HibernateUtil.findObjectById(Image.class, signLog.getImageId());
+		clientSignLogDetail.setImageUrl(image.getUrl());
+		Record record = HibernateUtil.findObjectById(Record.class, signLog.getRecordId());
+		clientSignLogDetail.setRecordUrl(record.getUrl());
+		clientSignLogDetail.setPosition(JSON.parseObject(signLog.getPosition(), Position.class).getAddresses());
+		clientSignLogDetail.setSignTime(DateFormatUtils.format(signLog.getTime(), Constants.DATE_FORMAT_PATTERN));
+		clientSignLogDetail.setStartHour(signLog.getStartHour());
+		clientSignLogDetail.setStartMinute(signLog.getStartMinute());
+		clientSignLogDetail.setEndHour(signLog.getEndHour());
+		clientSignLogDetail.setEndMinute(signLog.getEndMinute());
+		clientSignLogDetail.setInTimeRange(signLog.getInTimeRange());
+		Mission mission = HibernateUtil.findObjectById(Mission.class, signLog.getMissionId());
+		clientSignLogDetail.setMissionName(mission.getName());
+		User user = HibernateUtil.findObjectById(User.class, signLog.getUserId());
+		clientSignLogDetail.setNickname(user.getNickname());
+		clientSignLogDetail.setAvatarUrl(user.getAvatarUrl());
+		ResponseUtil.writeJson(response, clientSignLogDetail);
 	}
 
 }

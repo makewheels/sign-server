@@ -14,65 +14,65 @@ public class Coords {
 	private double latitude;
 	private double longitude;
 	private int accuracy;
-	private int altitude;
+	private String altitude;
 	private String heading;
 	private int speed;
 	private int altitudeAccuracy;
-
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
 
 	public double getLatitude() {
 		return latitude;
 	}
 
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
 	}
 
 	public double getLongitude() {
 		return longitude;
 	}
 
-	public void setAccuracy(int accuracy) {
-		this.accuracy = accuracy;
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 	public int getAccuracy() {
 		return accuracy;
 	}
 
-	public void setAltitude(int altitude) {
-		this.altitude = altitude;
+	public void setAccuracy(int accuracy) {
+		this.accuracy = accuracy;
 	}
 
-	public int getAltitude() {
+	public String getAltitude() {
 		return altitude;
 	}
 
-	public void setHeading(String heading) {
-		this.heading = heading;
+	public void setAltitude(String altitude) {
+		this.altitude = altitude;
 	}
 
 	public String getHeading() {
 		return heading;
 	}
 
-	public void setSpeed(int speed) {
-		this.speed = speed;
+	public void setHeading(String heading) {
+		this.heading = heading;
 	}
 
 	public int getSpeed() {
 		return speed;
 	}
 
-	public void setAltitudeAccuracy(int altitudeAccuracy) {
-		this.altitudeAccuracy = altitudeAccuracy;
+	public void setSpeed(int speed) {
+		this.speed = speed;
 	}
 
 	public int getAltitudeAccuracy() {
 		return altitudeAccuracy;
+	}
+
+	public void setAltitudeAccuracy(int altitudeAccuracy) {
+		this.altitudeAccuracy = altitudeAccuracy;
 	}
 
 }

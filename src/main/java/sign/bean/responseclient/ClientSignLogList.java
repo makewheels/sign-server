@@ -1,4 +1,4 @@
-package sign.bean.returnclient;
+package sign.bean.responseclient;
 
 /**
  * 返回给客户端的签到记录列表
@@ -6,7 +6,7 @@ package sign.bean.returnclient;
  * @author Administrator
  *
  */
-public class SignLogList {
+public class ClientSignLogList {
 	private String signLogUuid;// 签到uuid
 	private String avatarUrl;// 头像url
 	private String nickname;// 昵称
