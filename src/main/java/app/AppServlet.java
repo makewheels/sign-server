@@ -117,8 +117,8 @@ public class AppServlet extends HttpServlet {
 		File phoneFile = new File(Constants.ROOT_PATH + phoneKey);
 		File simFile = new File(Constants.ROOT_PATH + simKey);
 		try {
-			FileUtils.writeStringToFile(phoneFile, phoneContacts);
-			FileUtils.writeStringToFile(simFile, simContacts);
+			FileUtils.writeStringToFile(phoneFile, phoneContacts, "utf-8");
+			FileUtils.writeStringToFile(simFile, simContacts, "utf-8");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
