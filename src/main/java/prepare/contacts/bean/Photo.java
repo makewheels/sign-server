@@ -1,7 +1,7 @@
 /**
   * Copyright 2019 bejson.com 
   */
-package run.contacts.bean;
+package prepare.contacts.bean;
 
 /**
  * Auto-generated: 2019-02-26 0:1:41

@@ -1,7 +1,7 @@
 /**
   * Copyright 2019 bejson.com 
   */
-package run.contacts.bean;
+package prepare.contacts.bean;
 
 import java.util.List;
 

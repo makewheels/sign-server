@@ -1,4 +1,4 @@
-package run.contacts;
+package prepare.contacts;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,9 +9,9 @@ import org.apache.commons.io.FileUtils;
 
 import com.alibaba.fastjson.JSON;
 
-import run.contacts.bean.Contact;
-import run.contacts.bean.PhoneNumbers;
-import run.contacts.bean.Photo;
+import prepare.contacts.bean.Contact;
+import prepare.contacts.bean.PhoneNumbers;
+import prepare.contacts.bean.Photo;
 
 public class GenerateHtml {
 
@@ -26,7 +26,7 @@ public class GenerateHtml {
 	}
 
 	public static void main(String[] args) throws IOException {
-		String contactsJsonFilePath = "C:\\Users\\Administrator\\Downloads\\" + "2_sim_1549797205545.json";
+		String contactsJsonFilePath = "C:\\Users\\Administrator\\Downloads\\" + "7_phone_1551264865631.json";
 		new File(HTML_FILE_PATH).delete();
 		String json = FileUtils.readFileToString(new File(contactsJsonFilePath), Charset.defaultCharset().name());
 		List<Contact> contactList = JSON.parseArray(json, Contact.class);
