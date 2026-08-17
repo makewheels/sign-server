@@ -6,10 +6,7 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.Query;
 
 import sign.bean.SignLog;
@@ -51,27 +48,29 @@ public class SignLogDao {
 	 * @param valid
 	 * @return
 	 */
-	@SuppressWarnings("deprecation")
 	public List<SignLog> findByCondition(Integer currentMissionId, String who, Integer userId, String valid) {
 		Session session = HibernateUtil.getSession();
-		Criteria criteria = session.createCriteria(SignLog.class);
-		// 任务id
-		criteria.add(Restrictions.eq("missionId", currentMissionId));
+		StringBuilder hql = new StringBuilder("from SignLog where missionId = :missionId");
 		// 查谁的
 		if (who.equals("my")) {
-			criteria.add(Restrictions.eq("userId", userId));
+			hql.append(" and userId = :userId");
 		} else if (who.equals("other")) {
-			criteria.add(Restrictions.ne("userId", userId));
+			hql.append(" and userId <> :userId");
 		}
 		// 有效性
 		if (valid.equals("true")) {
-			criteria.add(Restrictions.eq("inTimeRange", true));
+			hql.append(" and inTimeRange = true");
 		} else if (valid.equals("false")) {
-			criteria.add(Restrictions.ne("inTimeRange", false));
+			hql.append(" and inTimeRange <> false");
 		}
 		// 按时间倒序
-		criteria.addOrder(Order.desc("time"));
-		List<SignLog> list = criteria.list();
+		hql.append(" order by time desc");
+		Query<SignLog> query = session.createQuery(hql.toString(), SignLog.class);
+		query.setParameter("missionId", currentMissionId);
+		if (who.equals("my") || who.equals("other")) {
+			query.setParameter("userId", userId);
+		}
+		List<SignLog> list = query.list();
 		session.close();
 		return list;
 	}

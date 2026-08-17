@@ -12,15 +12,15 @@ import java.util.Map;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.FileUploadException;
+import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletFileUpload;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -69,7 +69,7 @@ public class FileUploadServlet extends HttpServlet {
 		User user = (User) request.getSession().getAttribute("user");
 		Integer userId = user.getId();
 		try {
-			ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
+			JakartaServletFileUpload upload = new JakartaServletFileUpload(new DiskFileItemFactory.Builder().get());
 			List<FileItem> list = upload.parseRequest(request);
 			FileItem fileItem = list.get(0);
 			if (fileItem.isFormField() == false) {
@@ -127,7 +127,7 @@ public class FileUploadServlet extends HttpServlet {
 	 * @param response
 	 */
 	private void signRecord(HttpServletRequest request, HttpServletResponse response) {
-		ServletFileUpload upload = new ServletFileUpload(new DiskFileItemFactory());
+		JakartaServletFileUpload upload = new JakartaServletFileUpload(new DiskFileItemFactory.Builder().get());
 		Record record = new Record();
 		User user = (User) request.getSession().getAttribute("user");
 		Integer userId = user.getId();
